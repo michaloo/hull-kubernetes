@@ -1,0 +1,59 @@
+---
+metadata:
+  name: postgres
+kind: Service
+apiVersion: v1
+spec:
+  ports:
+  - name: postgres
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    name: postgres
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10G
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+         name: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: "postgres:9.5"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgresdata
+          mountPath: /usr/local/var/postgres
+        env:
+        -
+          name: POSTGRES_DB
+          value: hull
+        -
+          name: POSTGRES_USER
+          value: hull_user
+        -
+          name: POSTGRES_PASSWORD
+          value: postgres_password
+      volumes:
+      - name: postgresdata
+        persistentVolumeClaim:
+          claimName: postgres-data

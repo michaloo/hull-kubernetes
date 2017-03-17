@@ -1,0 +1,49 @@
+---
+metadata:
+  name: elasticsearch
+kind: Service
+apiVersion: v1
+spec:
+  ports:
+  - name: elasticsearch
+    protocol: TCP
+    port: 9200
+    targetPort: 9200
+  selector:
+    name: elasticsearch
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: elasticsearch-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+         name: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: "elasticsearch:2"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9200
+        volumeMounts:
+        - name: elasticsearchdata
+          mountPath: /data
+      volumes:
+      - name: elasticsearchdata
+        persistentVolumeClaim:
+          claimName: elasticsearch-data

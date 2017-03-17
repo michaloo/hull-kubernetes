@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hull
+  labels:
+    name: hull
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: hull
+    spec:
+      containers:
+        - name: hull
+          image: us.gcr.io/hulldev-michaloo/hull:v1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: SECRET_KEY_BASE
+              value:
+            - name: MYSQL_USER
+              value:
+            - name: MYSQL_PASSWORD
+              value:
