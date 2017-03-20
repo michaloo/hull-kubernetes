@@ -1,6 +1,6 @@
 ## Kubernetes - Google Cloud Installation
 
-1. before creating a cluster vistin in browser:
+1. before creating a cluster vist in browser:
 https://console.cloud.google.com/kubernetes/list
 
 **inital setup**:
@@ -45,11 +45,11 @@ open http://localhost:8001/ui
 
 > edit `kubernetes_configs/hull/hull.yml` and set ip and project name
 
-**deploy application**:
+**deploy application (needs copying Dockerfile to hull/hull)**:
 ```sh
 docker build -t hull .
-docker tag hull eu.gcr.io/hulldev-michaloo/hull:v1
-gcloud docker -- push eu.gcr.io/hulldev-michaloo/hull:v1
+docker tag hull eu.gcr.io/hulldev-michaloo/hull:v2
+gcloud docker -- push eu.gcr.io/hulldev-michaloo/hull:v2
 kubectl apply -f kubernetes_configs/hull/hull.yml
 ```
 

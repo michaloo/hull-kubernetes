@@ -5,7 +5,6 @@ metadata:
   labels:
     name: hull
 spec:
-  replicas: 2
   template:
     metadata:
       labels:
@@ -13,13 +12,29 @@ spec:
     spec:
       containers:
         - name: hull
-          image: us.gcr.io/hulldev-michaloo/hull:v1
+          # set project name here:
+          image: eu.gcr.io/hulldev-michaloo/hull:v2
           ports:
             - containerPort: 3000
           env:
-            - name: SECRET_KEY_BASE
-              value:
             - name: MYSQL_USER
               value:
             - name: MYSQL_PASSWORD
               value:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hull-lb
+  labels:
+    name: hull-lb
+spec:
+  type: LoadBalancer
+  # set your external IP here:
+  loadBalancerIP: 104.199.2.150
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    name: hull
