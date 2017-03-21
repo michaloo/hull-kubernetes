@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hull
+  labels:
+    name: hull
+spec:
+  template:
+    metadata:
+      labels:
+        name: hull
+    spec:
+      containers:
+        - name: hull
+          # set project name here:
+          image: gcr.io/hulldev-michaloo/hull:a6be63f77d4b798f027a5fb8eb3dbfe179c59766
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGOHQ_URL
+              value: mongodb://mongo:27017/hull_dev
+            - name: HULL_DOMAIN
+              value: michaloo.hull.rocks
+            - name: REDIS_URL
+              value: redis://redis-master:6379
+            - name: ELASTICSEARCH_URL
+              value: http://elasticsearch:9200/
+            - name: MEMCACHIER_SERVERS
+              value: memcached-master:11211
+            - name: MOSQL_POSTGRES_URL
+              value: postgres://hull_user:postgres_password@postgres:5432/hull
+            - name: ENFORCE_SSL
+              value: "true"
+            - name: RAILS_ENV
+              value: production
+            - name: RACK_ENV
+              value: production
+            - name: HONEYBADGER_API_KEY
+              value: f2ae0082
+            - name: HONEYBADGER_ENV
+              value: michaloo.hull.rocks
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hull
+  labels:
+    name: hull
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    name: hull

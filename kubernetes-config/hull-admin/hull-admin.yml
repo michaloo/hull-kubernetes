@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hull-admin
+  labels:
+    name: hull-admin
+spec:
+  template:
+    metadata:
+      labels:
+        name: hull-admin
+    spec:
+      containers:
+        - name: hull-admin
+          # set project name here:
+          image: gcr.io/hulldev-michaloo/hull-admin:8c4081c2e6d52351c68ea5f01a8560c3c2d1d858
+          ports:
+            - containerPort: 8032
+          env:
+            - name: ANALYTICS_DATABASE_URL
+              value: postgres://hull_user:postgres_password@postgres:5432/hull
+            - name: CLUSTER
+              value: "true"
+            - name: HULL_APP_ID
+              value: 52fb86bedea4dfd8de000003
+            - name: HULL_IMG_RESIZER_DOMAIN
+              value: hullbeta.imgix.net
+            - name: HULL_ORG_URL
+              value: https://super.michaloo.hull.rocks
+            - name: HULL_PROXY_DOMAIN
+              value: michaloo.hull.rocks
+            - name: NODE_ENV
+              value: production
+            - name: SENTRY_DSN
+              value: https://b48444428afa4b49a27be98c5a2ad571@app.getsentry.com/39033
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hull-admin
+  labels:
+    name: hull-admin
+spec:
+  ports:
+    - port: 80
+      targetPort: 8032
+      protocol: TCP
+  selector:
+    name: hull-admin

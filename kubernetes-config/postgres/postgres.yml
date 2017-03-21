@@ -55,5 +55,6 @@ spec:
           value: postgres_password
       volumes:
       - name: postgresdata
-        persistentVolumeClaim:
-          claimName: postgres-data
+        emptyDir: {}
+        # persistentVolumeClaim:
+        #   claimName: postgres-data

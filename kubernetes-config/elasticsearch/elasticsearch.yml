@@ -45,5 +45,6 @@ spec:
           mountPath: /data
       volumes:
       - name: elasticsearchdata
-        persistentVolumeClaim:
-          claimName: elasticsearch-data
+        emptyDir: {}
+        # persistentVolumeClaim:
+        #   claimName: elasticsearch-data

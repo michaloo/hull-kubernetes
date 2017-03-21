@@ -1,6 +1,6 @@
 ## Kubernetes - Google Cloud Installation
 
-1. before creating a cluster vist in browser:
+> before creating a cluster vist in browser:
 https://console.cloud.google.com/kubernetes/list
 
 **inital setup**:
@@ -15,9 +15,7 @@ gcloud config set project hulldev-michaloo
 
 **prepare disk and IP**:
 ```sh
-gcloud compute disks create db-data --size 200GB
 gcloud compute addresses create hull-external --region=europe-west1
-gcloud compute addresses create hull-dashboard-external --region=europe-west1
 ```
 
 **create cluster**:
@@ -27,14 +25,13 @@ gcloud container clusters create hulldev
 gcloud container clusters get-credentials hulldev
 ```
 
-**deploy services**:
+**deploy database services**:
 ```sh
-kubectl apply -f kubernetes_configs/persistent-volumes.yml
-kubectl apply -f kubernetes_configs/redis/redis.yml
-kubectl apply -f kubernetes_configs/memcached/memcached.yml
-kubectl apply -f kubernetes_configs/elasticsearch/elasticsearch.yml
-kubectl apply -f kubernetes_configs/postgres/postgres.yml
-kubectl apply -f kubernetes_configs/mongo/mongo.yml
+kubectl apply -f kubernetes-config/redis/redis.yml
+kubectl apply -f kubernetes-config/memcached/memcached.yml
+kubectl apply -f kubernetes-config/elasticsearch/elasticsearch.yml
+kubectl apply -f kubernetes-config/postgres/postgres.yml
+kubectl apply -f kubernetes-config/mongo/mongo.yml
 ```
 
 **cluster dashboard**
@@ -43,16 +40,27 @@ kubectl proxy
 open http://localhost:8001/ui
 ```
 
-> edit `kubernetes_configs/hull/hull.yml` and set ip and project name
+> edit `kubernetes-config/hull/hull.yml` and set ip and project name
 
-**deploy application (needs copying Dockerfile to hull/hull)**:
+**deploy applications**:
 ```sh
-docker build -t hull .
-docker tag hull eu.gcr.io/hulldev-michaloo/hull:v2
-gcloud docker -- push eu.gcr.io/hulldev-michaloo/hull:v2
-kubectl apply -f kubernetes_configs/hull/hull.yml
+kubectl apply -f kubernetes-config/hull/hull.yml
+kubectl apply -f kubernetes-config/hull-admin/hull-admin.yml
 ```
 
+**deploy traefik router**:
+```sh
+kubectl apply -f kubernetes-config/traefik/config.yml
+kubectl apply -f kubernetes-config/traefik/traefik.yml
+kubectl apply -f kubernetes-config/traefik/ingess.yml
+```
+
+
+**clear the gcloud project**:
+```sh
+gcloud container clusters delete hulldev
+# remember to remove forwarding rules from public IP if you are not removing it
+```
 
 
 ### Inspirations
